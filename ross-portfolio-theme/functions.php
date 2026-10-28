@@ -24,3 +24,4 @@ require_once ROSS_PORTFOLIO_DIR . '/inc/enqueue.php';
 require_once ROSS_PORTFOLIO_DIR . '/inc/helpers.php';
 require_once ROSS_PORTFOLIO_DIR . '/inc/customizer.php';
 require_once ROSS_PORTFOLIO_DIR . '/inc/seeder.php';
+require_once ROSS_PORTFOLIO_DIR . '/inc/seo-aeo.php';

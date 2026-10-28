@@ -18,12 +18,12 @@ $faqs    = ross_portfolio_get_faqs();
 ?>
 
 <!-- Hero Section -->
-<section id="about" class="hero-section">
+<section id="about" class="hero-section" itemscope itemtype="https://schema.org/Person" itemprop="mainEntity">
 	<div class="hero-grid">
 		<div class="hero-content">
 			<div class="glass-pill hero-badge">
 				<span class="hero-badge-dot"></span>
-				<span><?php echo esc_html( $profile['title'] ); ?></span>
+				<span itemprop="jobTitle"><?php echo esc_html( $profile['title'] ); ?></span>
 			</div>
 
 			<h1 class="hero-title">
@@ -34,22 +34,22 @@ $faqs    = ross_portfolio_get_faqs();
 				<?php echo esc_html( $profile['hero_subhead'] ); ?>
 			</p>
 
-			<div class="hero-bio">
+			<div class="hero-bio" itemprop="description">
 				<?php echo wp_kses_post( wpautop( $profile['bio'] ) ); ?>
 			</div>
 
 			<div class="hero-meta">
 				<?php if ( ! empty( $profile['location'] ) ) : ?>
-					<div class="hero-meta-item">
+					<div class="hero-meta-item" itemprop="workLocation" itemscope itemtype="https://schema.org/Place">
 						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-						<span><?php echo esc_html( $profile['location'] ); ?></span>
+						<span itemprop="name"><?php echo esc_html( $profile['location'] ); ?></span>
 					</div>
 				<?php endif; ?>
 
 				<?php if ( ! empty( $profile['email'] ) ) : ?>
 					<div class="hero-meta-item">
 						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-						<span><?php echo esc_html( $profile['email'] ); ?></span>
+						<a href="<?php echo esc_url( 'mailto:' . $profile['email'] ); ?>" style="color: inherit; text-decoration: none;" itemprop="email"><?php echo esc_html( $profile['email'] ); ?></a>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -63,7 +63,7 @@ $faqs    = ross_portfolio_get_faqs();
 				<?php endif; ?>
 
 				<?php if ( ! empty( $profile['github'] ) ) : ?>
-					<a href="<?php echo esc_url( $profile['github'] ); ?>" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+					<a href="<?php echo esc_url( $profile['github'] ); ?>" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" itemprop="sameAs">
 						<?php echo wp_kses( ross_portfolio_get_social_svg( 'github' ), ross_portfolio_get_allowed_svg_tags() ); ?>
 						<span>GitHub</span>
 					</a>
@@ -74,7 +74,7 @@ $faqs    = ross_portfolio_get_faqs();
 		<div class="hero-avatar-wrap">
 			<div class="hero-avatar-frame">
 				<?php if ( ! empty( $profile['avatar_url'] ) ) : ?>
-					<img src="<?php echo esc_url( $profile['avatar_url'] ); ?>" alt="<?php echo esc_attr( $profile['display_name'] ); ?>" class="hero-avatar">
+					<img src="<?php echo esc_url( $profile['avatar_url'] ); ?>" alt="<?php echo esc_attr( $profile['display_name'] ); ?>" class="hero-avatar" itemprop="image">
 				<?php else : ?>
 					<div class="hero-avatar" style="display: flex; align-items: center; justify-content: center; background: rgba(96, 165, 250, 0.1); color: var(--accent-blue); font-size: 4rem; font-weight: 800;">
 						<?php echo esc_html( substr( $profile['display_name'], 0, 1 ) ); ?>
@@ -108,11 +108,11 @@ $faqs    = ross_portfolio_get_faqs();
 			while ( $projects_query->have_posts() ) :
 				$projects_query->the_post();
 				?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class( 'glass-card project-card' ); ?>>
+				<article id="post-<?php the_ID(); ?>" <?php post_class( 'glass-card project-card' ); ?> itemscope itemtype="https://schema.org/CreativeWork">
 					<?php if ( has_post_thumbnail() ) : ?>
 						<div class="project-thumbnail">
 							<a href="<?php the_permalink(); ?>">
-								<?php the_post_thumbnail( 'medium_large' ); ?>
+								<?php the_post_thumbnail( 'medium_large', array( 'itemprop' => 'image' ) ); ?>
 							</a>
 						</div>
 					<?php else : ?>
@@ -122,16 +122,16 @@ $faqs    = ross_portfolio_get_faqs();
 					<?php endif; ?>
 
 					<div class="project-body">
-						<h3 class="project-title">
-							<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+						<h3 class="project-title" itemprop="name">
+							<a href="<?php the_permalink(); ?>" itemprop="url"><?php the_title(); ?></a>
 						</h3>
 
-						<div class="project-excerpt">
+						<div class="project-excerpt" itemprop="description">
 							<?php the_excerpt(); ?>
 						</div>
 
 						<div class="project-footer">
-							<span><?php echo esc_html( get_the_date() ); ?></span>
+							<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" itemprop="datePublished"><?php echo esc_html( get_the_date() ); ?></time>
 							<a href="<?php the_permalink(); ?>" class="btn-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.875rem;">
 								<?php esc_html_e( 'View Details', 'ross-portfolio' ); ?> &rarr;
 							</a>
@@ -150,9 +150,9 @@ $faqs    = ross_portfolio_get_faqs();
 	<?php endif; ?>
 </section>
 
-<!-- Interactive FAQ Accordion Section -->
+<!-- Interactive FAQ Accordion Section (AEO/GEO Optimized) -->
 <?php if ( ! empty( $faqs ) ) : ?>
-<section id="faq" class="section-wrapper">
+<section id="faq" class="section-wrapper" itemscope itemtype="https://schema.org/FAQPage">
 	<div class="faq-section">
 		<div class="section-header" style="text-align: center;">
 			<span class="section-tag"><?php esc_html_e( 'Questions & Answers', 'ross-portfolio' ); ?></span>
@@ -170,13 +170,13 @@ $faqs    = ross_portfolio_get_faqs();
 					continue;
 				}
 				?>
-				<div class="glass-card faq-item">
+				<div class="glass-card faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
 					<button id="<?php echo esc_attr( $trigger_id ); ?>" class="faq-trigger" aria-expanded="false" aria-controls="<?php echo esc_attr( $panel_id ); ?>">
-						<span><?php echo esc_html( $question ); ?></span>
+						<span itemprop="name"><?php echo esc_html( $question ); ?></span>
 						<svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
 					</button>
-					<div id="<?php echo esc_attr( $panel_id ); ?>" class="faq-panel" hidden aria-labelledby="<?php echo esc_attr( $trigger_id ); ?>">
-						<p><?php echo esc_html( $answer ); ?></p>
+					<div id="<?php echo esc_attr( $panel_id ); ?>" class="faq-panel" hidden aria-labelledby="<?php echo esc_attr( $trigger_id ); ?>" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+						<p itemprop="text"><?php echo esc_html( $answer ); ?></p>
 					</div>
 				</div>
 			<?php endforeach; ?>
