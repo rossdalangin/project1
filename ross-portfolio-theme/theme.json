@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "color": {
+      "custom": true,
+      "customGradient": true,
+      "palette": [
+        {
+          "name": "Background Dark",
+          "slug": "bg-dark",
+          "color": "#070A0E"
+        },
+        {
+          "name": "Glass Surface",
+          "slug": "surface-glass",
+          "color": "rgba(18, 25, 35, 0.65)"
+        },
+        {
+          "name": "Electric Blue",
+          "slug": "accent-blue",
+          "color": "#60A5FA"
+        },
+        {
+          "name": "Success Emerald",
+          "slug": "accent-emerald",
+          "color": "#34D399"
+        },
+        {
+          "name": "Text Main",
+          "slug": "text-main",
+          "color": "#F3F4F6"
+        },
+        {
+          "name": "Text Muted",
+          "slug": "text-muted",
+          "color": "#9CA3AF"
+        }
+      ]
+    },
+    "typography": {
+      "customFontSize": true,
+      "fontStyle": true,
+      "fontWeight": true,
+      "letterSpacing": true,
+      "lineHeight": true,
+      "textDecoration": true,
+      "textTransform": true,
+      "fontFamilies": [
+        {
+          "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+          "name": "System Font Stack",
+          "slug": "system"
+        },
+        {
+          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+          "name": "Monospace",
+          "slug": "monospace"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "800px",
+      "wideSize": "1200px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "#070A0E",
+      "text": "#F3F4F6"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--system)",
+      "lineHeight": "1.6"
+    },
+    "elements": {
+      "link": {
+        "color": {
+          "text": "#60A5FA"
+        }
+      },
+      "h1": {
+        "color": {
+          "text": "#FFFFFF"
+        }
+      },
+      "h2": {
+        "color": {
+          "text": "#FFFFFF"
+        }
+      },
+      "h3": {
+        "color": {
+          "text": "#FFFFFF"
+        }
+      }
+    }
+  }
+}
