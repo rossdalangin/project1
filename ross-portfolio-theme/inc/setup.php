@@ -1,6 +1,6 @@
 <?php
 /**
- * Theme Setup Configuration
+ * Theme Setup Configuration & Security Hardening Hooks
  *
  * @package RossPortfolio
  */
@@ -56,3 +56,34 @@ if ( ! function_exists( 'ross_portfolio_setup' ) ) :
 	}
 endif;
 add_action( 'after_setup_theme', 'ross_portfolio_setup' );
+
+/**
+ * Security Hardening: Remove WP version generator and discovery tags.
+ */
+function ross_portfolio_security_cleanup() {
+	// Remove WordPress generator version tag from wp_head and RSS feeds
+	remove_action( 'wp_head', 'wp_generator' );
+
+	// Remove Really Simple Discovery (RSD) link tag
+	remove_action( 'wp_head', 'rsd_link' );
+
+	// Remove Windows Live Writer manifest link tag
+	remove_action( 'wp_head', 'wlwmanifest_link' );
+
+	// Remove shortlink tag
+	remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+}
+add_action( 'init', 'ross_portfolio_security_cleanup' );
+
+/**
+ * Security Hardening: Add Security HTTP Headers
+ */
+function ross_portfolio_add_security_headers() {
+	if ( ! is_admin() ) {
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( 'X-XSS-Protection: 1; mode=block' );
+		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	}
+}
+add_action( 'send_headers', 'ross_portfolio_add_security_headers' );

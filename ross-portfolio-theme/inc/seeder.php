@@ -9,7 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Seed Theme Settings and Demo Content securely.
+ */
 function ross_portfolio_seed_content() {
+	// Security check: only users with manage_options capability can execute content seeding.
+	if ( is_admin() && ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
 	if ( get_option( 'ross_portfolio_seeded_v1' ) ) {
 		return;
 	}
