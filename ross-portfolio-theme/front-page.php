@@ -26,7 +26,7 @@ $projects_empty    = ross_portfolio_get_option( 'projects_empty_text', __( 'No p
 
 // Standout High-Converting CTA Section Controls
 $cta_tag           = ross_portfolio_get_option( 'standout_cta_tag', __( 'Ready to Scale?', 'ross-portfolio' ) );
-$cta_heading       = ross_portfolio_get_option( 'standout_cta_headline', __( 'Transform Your Web Architecture into a High-Converting Engine', 'ross-portfolio' ) );
+$cta_heading       = ross_portfolio_get_option( 'standout_cta_heading', __( 'Transform Your Web Architecture into a High-Converting Engine', 'ross-portfolio' ) );
 $cta_desc          = ross_portfolio_get_option( 'standout_cta_desc', __( 'Stop losing revenue and users to bloated plugins and sluggish load times. Partner directly with an elite frontend architect to build custom, ultra-fast WordPress applications.', 'ross-portfolio' ) );
 $cta_primary_btn   = ross_portfolio_get_option( 'standout_cta_primary_btn_text', __( 'Schedule Architecture Review', 'ross-portfolio' ) );
 $cta_primary_url   = ross_portfolio_get_option( 'standout_cta_primary_btn_url', '#contact' );
