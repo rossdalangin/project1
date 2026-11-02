@@ -34,6 +34,7 @@ $profile = ross_portfolio_get_profile_details();
 				the_custom_logo();
 			} else {
 				?>
+				<span class="brand-symbol"><?php echo esc_html( substr( $profile['display_name'], 0, 1 ) ); ?></span>
 				<span class="site-title">
 					<?php echo esc_html( $profile['display_name'] ); ?><span>.dev</span>
 				</span>
@@ -41,28 +42,6 @@ $profile = ross_portfolio_get_profile_details();
 			}
 			?>
 		</a>
-
-		<!-- Desktop Quick Contact & CTA -->
-		<div class="header-desktop-actions">
-			<?php if ( ! empty( $profile['phone'] ) ) : ?>
-				<a href="<?php echo esc_url( 'tel:' . preg_replace( '/[^0-9+]/', '', $profile['phone'] ) ); ?>" class="header-phone-link" aria-label="<?php esc_attr_e( 'Call directly', 'ross-portfolio' ); ?>">
-					<?php echo wp_kses( ross_portfolio_get_social_svg( 'phone' ), ross_portfolio_get_allowed_svg_tags() ); ?>
-					<span><?php echo esc_html( $profile['phone'] ); ?></span>
-				</a>
-			<?php endif; ?>
-
-			<?php if ( ! empty( $profile['header_cta_text'] ) && ! empty( $profile['header_cta_url'] ) ) : ?>
-				<a href="<?php echo esc_url( $profile['header_cta_url'] ); ?>" class="btn btn-primary header-cta-btn">
-					<?php echo esc_html( $profile['header_cta_text'] ); ?>
-				</a>
-			<?php endif; ?>
-		</div>
-
-		<button id="primary-nav-toggle" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation menu', 'ross-portfolio' ); ?>">
-			<span></span>
-			<span></span>
-			<span></span>
-		</button>
 
 		<nav id="primary-nav" class="primary-nav" aria-label="<?php esc_attr_e( 'Primary Menu', 'ross-portfolio' ); ?>" itemscope itemtype="https://schema.org/SiteNavigationElement">
 			<div class="mobile-drawer-header">
@@ -86,6 +65,7 @@ $profile = ross_portfolio_get_profile_details();
 				?>
 				<ul id="primary-menu" class="nav-menu">
 					<li><a href="<?php echo esc_url( home_url( '/#about' ) ); ?>"><?php esc_html_e( 'About', 'ross-portfolio' ); ?></a></li>
+					<li><a href="<?php echo esc_url( home_url( '/#skills' ) ); ?>"><?php esc_html_e( 'Skills', 'ross-portfolio' ); ?></a></li>
 					<li><a href="<?php echo esc_url( home_url( '/#projects' ) ); ?>"><?php esc_html_e( 'Projects', 'ross-portfolio' ); ?></a></li>
 					<li><a href="<?php echo esc_url( home_url( '/#faq' ) ); ?>"><?php esc_html_e( 'FAQ', 'ross-portfolio' ); ?></a></li>
 					<li><a href="<?php echo esc_url( home_url( '/#contact' ) ); ?>"><?php esc_html_e( 'Contact', 'ross-portfolio' ); ?></a></li>
@@ -110,6 +90,28 @@ $profile = ross_portfolio_get_profile_details();
 				<?php endif; ?>
 			</div>
 		</nav>
+
+		<!-- Desktop Quick Contact & CTA -->
+		<div class="header-desktop-actions">
+			<?php if ( ! empty( $profile['phone'] ) ) : ?>
+				<a href="<?php echo esc_url( 'tel:' . preg_replace( '/[^0-9+]/', '', $profile['phone'] ) ); ?>" class="header-phone-link" aria-label="<?php esc_attr_e( 'Call directly', 'ross-portfolio' ); ?>">
+					<?php echo wp_kses( ross_portfolio_get_social_svg( 'phone' ), ross_portfolio_get_allowed_svg_tags() ); ?>
+					<span><?php echo esc_html( $profile['phone'] ); ?></span>
+				</a>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $profile['header_cta_text'] ) && ! empty( $profile['header_cta_url'] ) ) : ?>
+				<a href="<?php echo esc_url( $profile['header_cta_url'] ); ?>" class="btn btn-primary header-cta-btn">
+					<?php echo esc_html( $profile['header_cta_text'] ); ?>
+				</a>
+			<?php endif; ?>
+		</div>
+
+		<button id="primary-nav-toggle" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="<?php esc_attr_e( 'Toggle navigation menu', 'ross-portfolio' ); ?>">
+			<span></span>
+			<span></span>
+			<span></span>
+		</button>
 	</div>
 </header>
 
