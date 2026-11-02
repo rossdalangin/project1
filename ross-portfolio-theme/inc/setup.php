@@ -76,11 +76,12 @@ function ross_portfolio_widgets_init() {
 add_action( 'widgets_init', 'ross_portfolio_widgets_init' );
 
 /**
- * Security Hardening: Remove WP version generator and discovery tags.
+ * Security Hardening: Remove WP version generator, discovery tags, and disable pingbacks.
  */
 function ross_portfolio_security_cleanup() {
 	// Remove WordPress generator version tag from wp_head and RSS feeds
 	remove_action( 'wp_head', 'wp_generator' );
+	add_filter( 'the_generator', '__return_empty_string' );
 
 	// Remove Really Simple Discovery (RSD) link tag
 	remove_action( 'wp_head', 'rsd_link' );
@@ -90,6 +91,25 @@ function ross_portfolio_security_cleanup() {
 
 	// Remove shortlink tag
 	remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+
+	// Disable XML-RPC pingback methods (common DDoS vector)
+	add_filter(
+		'xmlrpc_methods',
+		function( $methods ) {
+			unset( $methods['pingback.ping'] );
+			unset( $methods['pingback.extensions.getPingbacks'] );
+			return $methods;
+		}
+	);
+
+	// Remove x-pingback HTTP header
+	add_filter(
+		'wp_headers',
+		function( $headers ) {
+			unset( $headers['X-Pingback'] );
+			return $headers;
+		}
+	);
 }
 add_action( 'init', 'ross_portfolio_security_cleanup' );
 
@@ -102,6 +122,18 @@ function ross_portfolio_add_security_headers() {
 		header( 'X-Frame-Options: SAMEORIGIN' );
 		header( 'X-XSS-Protection: 1; mode=block' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
 	}
 }
 add_action( 'send_headers', 'ross_portfolio_add_security_headers' );
+
+/**
+ * Security Hardening: Block User Enumeration via ?author=N queries
+ */
+function ross_portfolio_block_user_enumeration() {
+	if ( ! is_admin() && isset( $_REQUEST['author'] ) && ( is_numeric( $_REQUEST['author'] ) || '' === $_REQUEST['author'] ) ) {
+		wp_safe_redirect( home_url( '/' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'ross_portfolio_block_user_enumeration' );

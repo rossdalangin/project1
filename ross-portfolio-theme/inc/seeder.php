@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Seed Theme Settings and Demo Content securely.
  */
 function ross_portfolio_seed_content() {
-	// Security check: only users with manage_options capability can execute content seeding.
-	if ( is_admin() && ! current_user_can( 'manage_options' ) ) {
+	// Security check: strictly require administrator capability with manage_options
+	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
 

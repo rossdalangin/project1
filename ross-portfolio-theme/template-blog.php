@@ -88,19 +88,21 @@ $blog_query = new WP_Query(
 		<!-- Blog Page Navigation -->
 		<nav class="pagination blog-pagination" aria-label="<?php esc_attr_e( 'Blog Pages', 'ross-portfolio' ); ?>">
 			<?php
-			echo paginate_links(
-				array(
-					'base'         => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
-					'total'        => $blog_query->max_num_pages,
-					'current'      => max( 1, $paged ),
-					'format'       => '?paged=%#%',
-					'show_all'     => false,
-					'type'         => 'plain',
-					'end_size'     => 2,
-					'mid_size'     => 1,
-					'prev_next'    => true,
-					'prev_text'    => sprintf( '&laquo; %s', esc_html__( 'Previous', 'ross-portfolio' ) ),
-					'next_text'    => sprintf( '%s &raquo;', esc_html__( 'Next', 'ross-portfolio' ) ),
+			echo wp_kses_post(
+				paginate_links(
+					array(
+						'base'         => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
+						'total'        => $blog_query->max_num_pages,
+						'current'      => max( 1, $paged ),
+						'format'       => '?paged=%#%',
+						'show_all'     => false,
+						'type'         => 'plain',
+						'end_size'     => 2,
+						'mid_size'     => 1,
+						'prev_next'    => true,
+						'prev_text'    => sprintf( '&laquo; %s', esc_html__( 'Previous', 'ross-portfolio' ) ),
+						'next_text'    => sprintf( '%s &raquo;', esc_html__( 'Next', 'ross-portfolio' ) ),
+					)
 				)
 			);
 			?>

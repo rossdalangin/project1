@@ -211,6 +211,7 @@ function ross_portfolio_json_ld_schema() {
 	}
 
 	// Output encoded JSON-LD
-	echo '<script type="application/ld+json">' . wp_json_encode( $schemas, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) . '</script>' . "\n";
+	$json_flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT;
+	echo '<script type="application/ld+json">' . wp_json_encode( $schemas, $json_flags ) . '</script>' . "\n";
 }
 add_action( 'wp_head', 'ross_portfolio_json_ld_schema', 2 );

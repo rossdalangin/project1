@@ -41,7 +41,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		'theme_style_preset',
 		array(
 			'default'           => 'obsidian-cyber',
-			'sanitize_callback' => 'sanitize_key',
+			'sanitize_callback' => 'ross_portfolio_sanitize_select',
 		)
 	);
 	$wp_customize->add_control(
@@ -404,6 +404,46 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	// Hero Key Highlights / Metric Chips
+	for ( $m = 1; $m <= 3; $m++ ) {
+		$default_stats = array(
+			1 => array( 'value' => '100/100', 'label' => 'Core Web Vitals' ),
+			2 => array( 'value' => '10+ Yrs', 'label' => 'Enterprise Architecture' ),
+			3 => array( 'value' => '0 Deps', 'label' => 'Pure Vanilla Standards' ),
+		);
+		$wp_customize->add_setting(
+			"hero_stat_{$m}_value",
+			array(
+				'default'           => $default_stats[ $m ]['value'],
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		$wp_customize->add_control(
+			"hero_stat_{$m}_value",
+			array(
+				'label'   => sprintf( __( 'Hero Metric #%d: Value', 'ross-portfolio' ), $m ),
+				'section' => 'ross_portfolio_hero_section',
+				'type'    => 'text',
+			)
+		);
+
+		$wp_customize->add_setting(
+			"hero_stat_{$m}_label",
+			array(
+				'default'           => $default_stats[ $m ]['label'],
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		$wp_customize->add_control(
+			"hero_stat_{$m}_label",
+			array(
+				'label'   => sprintf( __( 'Hero Metric #%d: Label', 'ross-portfolio' ), $m ),
+				'section' => 'ross_portfolio_hero_section',
+				'type'    => 'text',
+			)
+		);
+	}
+
 	// Section 5: Skills & Technical Expertise Section (No JSON, Text & Image / Icon Fields)
 	$wp_customize->add_section(
 		'ross_portfolio_skills_section',
@@ -529,7 +569,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 			"skill_{$i}_icon",
 			array(
 				'default'           => $default_skills[ $i ]['icon'],
-				'sanitize_callback' => 'sanitize_key',
+				'sanitize_callback' => 'ross_portfolio_sanitize_select',
 			)
 		);
 		$wp_customize->add_control(
@@ -964,4 +1004,20 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		);
 	}
 }
+/**
+ * Strict select sanitizer callback validating against control choices.
+ *
+ * @param string               $input   User input value.
+ * @param WP_Customize_Setting $setting Setting instance.
+ * @return string Sanitized input or default if invalid.
+ */
+function ross_portfolio_sanitize_select( $input, $setting ) {
+	$input   = sanitize_key( $input );
+	$control = $setting->manager->get_control( $setting->id );
+	if ( $control && array_key_exists( $input, $control->choices ) ) {
+		return $input;
+	}
+	return $setting->default;
+}
+
 add_action( 'customize_register', 'ross_portfolio_customize_register' );

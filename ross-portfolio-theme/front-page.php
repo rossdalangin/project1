@@ -75,6 +75,26 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 					<span><?php echo esc_html( $profile['hero_secondary_cta_text'] ); ?></span>
 				</a>
 			</div>
+
+			<!-- Hero Performance & Architecture Metric Badges -->
+			<div class="hero-metrics-bar">
+				<?php
+				for ( $m = 1; $m <= 3; $m++ ) {
+					$default_values = array( 1 => '100/100', 2 => '10+ Yrs', 3 => '0 Deps' );
+					$default_labels = array( 1 => 'Core Web Vitals', 2 => 'Enterprise Architecture', 3 => 'Pure Vanilla Standards' );
+					$stat_val = ross_portfolio_get_option( "hero_stat_{$m}_value", $default_values[ $m ] );
+					$stat_lbl = ross_portfolio_get_option( "hero_stat_{$m}_label", $default_labels[ $m ] );
+					if ( ! empty( $stat_val ) ) :
+						?>
+						<div class="hero-metric-item">
+							<span class="hero-metric-value"><?php echo esc_html( $stat_val ); ?></span>
+							<span class="hero-metric-label"><?php echo esc_html( $stat_lbl ); ?></span>
+						</div>
+						<?php
+					endif;
+				}
+				?>
+			</div>
 		</div>
 
 		<div class="hero-card-column">
