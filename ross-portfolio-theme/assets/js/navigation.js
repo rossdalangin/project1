@@ -7,6 +7,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const navToggle = document.getElementById('primary-nav-toggle');
   const primaryNav = document.getElementById('primary-nav');
+  const navClose = document.getElementById('mobile-nav-close');
 
   if (!navToggle || !primaryNav) {
     return;
@@ -23,9 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     primaryNav.classList.add('is-active');
     document.body.style.overflow = 'hidden';
 
-    const focusables = getFocusableElements(primaryNav);
-    if (focusables.length > 0) {
-      focusables[0].focus();
+    // Focus close button or first element inside menu
+    if (navClose) {
+      navClose.focus();
+    } else {
+      const focusables = getFocusableElements(primaryNav);
+      if (focusables.length > 0) {
+        focusables[0].focus();
+      }
     }
   }
 
@@ -45,6 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  if (navClose) {
+    navClose.addEventListener('click', closeMenu);
+  }
+
+  // Close menu on Escape key press
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' || e.key === 'Esc') {
       if (navToggle.getAttribute('aria-expanded') === 'true') {
@@ -53,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // WCAG 2.2 Keyboard Focus Trap inside open mobile menu
   primaryNav.addEventListener('keydown', function (e) {
     if (navToggle.getAttribute('aria-expanded') !== 'true') {
       return;
@@ -68,23 +80,18 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.shiftKey) {
         if (document.activeElement === firstFocusable) {
           e.preventDefault();
-          navToggle.focus();
-        } else if (document.activeElement === navToggle) {
-          e.preventDefault();
           lastFocusable.focus();
         }
       } else {
-        if (document.activeElement === navToggle) {
+        if (document.activeElement === lastFocusable) {
           e.preventDefault();
           firstFocusable.focus();
-        } else if (document.activeElement === lastFocusable) {
-          e.preventDefault();
-          navToggle.focus();
         }
       }
     }
   });
 
+  // Interactive FAQ Accordion
   const faqTriggers = document.querySelectorAll('.faq-trigger');
   faqTriggers.forEach(function (trigger) {
     trigger.addEventListener('click', function () {

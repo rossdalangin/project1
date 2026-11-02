@@ -15,15 +15,51 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		'ross_portfolio_panel',
 		array(
 			'priority'    => 10,
-			'title'       => __( 'Portfolio Settings', 'ross-portfolio' ),
-			'description' => __( 'Manage owner profile details, social links, hero section, and FAQ items.', 'ross-portfolio' ),
+			'title'       => __( 'Portfolio & Theme Styling', 'ross-portfolio' ),
+			'description' => __( 'Manage curated color palettes, owner profile details, mobile CTA, phone number, and FAQ items.', 'ross-portfolio' ),
 		)
 	);
 
+	// Section 0: Curated Style & Color Presets
+	$wp_customize->add_section(
+		'ross_portfolio_styling_section',
+		array(
+			'title'       => __( 'Theme Styling & Color Themes', 'ross-portfolio' ),
+			'panel'       => 'ross_portfolio_panel',
+			'priority'    => 5,
+			'description' => __( 'Select from 6 popular and modern dark glassmorphism styling presets.', 'ross-portfolio' ),
+		)
+	);
+
+	$presets = ross_portfolio_get_style_presets();
+	$preset_choices = array();
+	foreach ( $presets as $key => $preset_data ) {
+		$preset_choices[ $key ] = $preset_data['name'];
+	}
+
+	$wp_customize->add_setting(
+		'theme_style_preset',
+		array(
+			'default'           => 'obsidian-cyber',
+			'sanitize_callback' => 'sanitize_key',
+		)
+	);
+	$wp_customize->add_control(
+		'theme_style_preset',
+		array(
+			'label'       => __( 'Preset Color Combination & Style', 'ross-portfolio' ),
+			'description' => __( 'Choose a modern preset to instantly restyle your header, cards, buttons, backgrounds, and accents.', 'ross-portfolio' ),
+			'section'     => 'ross_portfolio_styling_section',
+			'type'        => 'select',
+			'choices'     => $preset_choices,
+		)
+	);
+
+	// Section 1: Profile Details & Contact Info
 	$wp_customize->add_section(
 		'ross_portfolio_profile_section',
 		array(
-			'title'    => __( 'Owner Profile Details', 'ross-portfolio' ),
+			'title'    => __( 'Owner Profile & Direct Contact', 'ross-portfolio' ),
 			'panel'    => 'ross_portfolio_panel',
 			'priority' => 10,
 		)
@@ -95,6 +131,24 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	// Phone Number Control
+	$wp_customize->add_setting(
+		'profile_phone',
+		array(
+			'default'           => '+1 (555) 019-2834',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'profile_phone',
+		array(
+			'label'       => __( 'Direct Phone Number', 'ross-portfolio' ),
+			'description' => __( 'Displayed in the header and mobile navigation drawer for immediate calls.', 'ross-portfolio' ),
+			'section'     => 'ross_portfolio_profile_section',
+			'type'        => 'text',
+		)
+	);
+
 	$wp_customize->add_setting(
 		'profile_avatar_url',
 		array(
@@ -129,6 +183,49 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	// Section 2: Header & Mobile Call to Action
+	$wp_customize->add_section(
+		'ross_portfolio_header_cta_section',
+		array(
+			'title'    => __( 'Header & Mobile Call To Action', 'ross-portfolio' ),
+			'panel'    => 'ross_portfolio_panel',
+			'priority' => 15,
+		)
+	);
+
+	$wp_customize->add_setting(
+		'header_cta_text',
+		array(
+			'default'           => "Let's Talk",
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'header_cta_text',
+		array(
+			'label'   => __( 'Header / Mobile CTA Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_header_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'header_cta_url',
+		array(
+			'default'           => '#contact',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'header_cta_url',
+		array(
+			'label'   => __( 'Header / Mobile CTA Button URL', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_header_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	// Section 3: Social Links
 	$wp_customize->add_section(
 		'ross_portfolio_social_section',
 		array(
@@ -186,6 +283,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	// Section 4: Hero Headlines & CTA
 	$wp_customize->add_section(
 		'ross_portfolio_hero_section',
 		array(
@@ -259,6 +357,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	// Section 5: FAQ Items
 	$wp_customize->add_section(
 		'ross_portfolio_faq_section',
 		array(

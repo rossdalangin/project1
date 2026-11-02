@@ -1,6 +1,6 @@
 <?php
 /**
- * Theme Enqueue Scripts and Styles
+ * Theme Enqueue Scripts, Styles and Dynamic Presets
  *
  * @package RossPortfolio
  */
@@ -16,6 +16,25 @@ function ross_portfolio_scripts() {
 		array(),
 		ROSS_PORTFOLIO_VERSION
 	);
+
+	// Inject dynamic style preset CSS variables
+	$chosen_preset = ross_portfolio_get_option( 'theme_style_preset', 'obsidian-cyber' );
+	$presets       = ross_portfolio_get_style_presets();
+
+	if ( isset( $presets[ $chosen_preset ] ) ) {
+		$preset = $presets[ $chosen_preset ];
+		$custom_css = "
+		:root {
+			--bg-dark: {$preset['bg_dark']};
+			--bg-gradient-1: {$preset['bg_gradient_1']};
+			--bg-gradient-2: {$preset['bg_gradient_2']};
+			--surface-glass: {$preset['surface_glass']};
+			--accent-blue: {$preset['accent_blue']};
+			--accent-blue-hover: {$preset['accent_blue_hover']};
+			--accent-emerald: {$preset['accent_emerald']};
+		}";
+		wp_add_inline_style( 'ross-portfolio-style', $custom_css );
+	}
 
 	wp_enqueue_script(
 		'ross-portfolio-navigation',
