@@ -123,6 +123,12 @@ function ross_portfolio_add_security_headers() {
 		header( 'X-XSS-Protection: 1; mode=block' );
 		header( 'Referrer-Policy: strict-origin-when-cross-origin' );
 		header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
+		header( 'X-Permitted-Cross-Domain-Policies: none' );
+		header( 'Cross-Origin-Opener-Policy: same-origin' );
+		header( 'Cross-Origin-Resource-Policy: same-origin' );
+		if ( is_ssl() ) {
+			header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload' );
+		}
 	}
 }
 add_action( 'send_headers', 'ross_portfolio_add_security_headers' );
@@ -137,3 +143,69 @@ function ross_portfolio_block_user_enumeration() {
 	}
 }
 add_action( 'template_redirect', 'ross_portfolio_block_user_enumeration' );
+
+/**
+ * Security Hardening: Block REST API User Enumeration
+ * Restricts /wp/v2/users endpoints to authenticated administrators or users with 'list_users' capability.
+ */
+function ross_portfolio_restrict_rest_users( $endpoints ) {
+	if ( ! is_user_logged_in() || ! current_user_can( 'list_users' ) ) {
+		if ( isset( $endpoints['/wp/v2/users'] ) ) {
+			unset( $endpoints['/wp/v2/users'] );
+		}
+		if ( isset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] ) ) {
+			unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
+		}
+	}
+	return $endpoints;
+}
+add_filter( 'rest_endpoints', 'ross_portfolio_restrict_rest_users' );
+
+/**
+ * Security Hardening: Obfuscate Login Errors to Prevent Username Harvesting
+ */
+function ross_portfolio_obfuscate_login_errors() {
+	return esc_html__( 'Invalid username or password. Please try again.', 'ross-portfolio' );
+}
+add_filter( 'login_errors', 'ross_portfolio_obfuscate_login_errors' );
+
+/**
+ * Security Hardening: Disable Core XML User / Author Sitemaps
+ * Prevents enumeration of administrative usernames via wp-sitemap-users-1.xml.
+ */
+function ross_portfolio_disable_users_sitemap( $provider, $name ) {
+	if ( 'users' === $name ) {
+		return false;
+	}
+	return $provider;
+}
+add_filter( 'wp_sitemaps_add_provider', 'ross_portfolio_disable_users_sitemap', 10, 2 );
+
+/**
+ * Security Hardening: Enforce Comment Length and Sanitization
+ */
+function ross_portfolio_limit_comment_length( $commentdata ) {
+	// Restrict comment content length to prevent payload abuse
+	if ( ! empty( $commentdata['comment_content'] ) && mb_strlen( $commentdata['comment_content'] ) > 4000 ) {
+		wp_die( esc_html__( 'Error: Your comment is too long. Please limit your comment to 4,000 characters.', 'ross-portfolio' ), 400 );
+	}
+	return $commentdata;
+}
+add_filter( 'preprocess_comment', 'ross_portfolio_limit_comment_length' );
+
+/**
+ * Security Hardening: Sanitize Comment Links with rel="nofollow noopener noreferrer"
+ */
+function ross_portfolio_harden_comment_links( $text ) {
+	return preg_replace_callback(
+		'/<a\s+([^>]+)>/i',
+		function( $matches ) {
+			$attrs = $matches[1];
+			// Remove any pre-existing rel attribute
+			$attrs = preg_replace( '/\brel=([\'"])[^\'"]*\\1/i', '', $attrs );
+			return '<a ' . trim( $attrs ) . ' rel="nofollow noopener noreferrer">';
+		},
+		$text
+	);
+}
+add_filter( 'comment_text', 'ross_portfolio_harden_comment_links', 20 );

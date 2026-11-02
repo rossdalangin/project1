@@ -26,39 +26,72 @@ $posted_data  = array(
 
 // Process server-side form submission
 if ( 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['ross_portfolio_contact_submit'] ) ) {
-	// 1. Verify Nonce
-	if ( ! isset( $_POST['ross_portfolio_contact_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ross_portfolio_contact_nonce'] ) ), 'ross_portfolio_contact_action' ) ) {
-		$form_errors[] = __( 'Security verification failed. Please refresh and try again.', 'ross-portfolio' );
+	// 1. IP Rate Limiting (Transient-based, max 5 submissions per 10 minutes)
+	$client_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '0.0.0.0';
+	$rate_key  = 'ross_contact_rate_' . md5( $client_ip );
+	$rate_hits = (int) get_transient( $rate_key );
+
+	if ( $rate_hits >= 5 ) {
+		$form_errors['rate_limit'] = __( 'Submission limit reached. Please wait a few minutes before sending another inquiry.', 'ross-portfolio' );
 	}
 
-	// 2. Honeypot check (hidden field to trap spam bots)
-	if ( ! empty( $_POST['contact_secondary_verification'] ) ) {
+	// 2. Verify Nonce
+	if ( empty( $form_errors ) ) {
+		if ( ! isset( $_POST['ross_portfolio_contact_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ross_portfolio_contact_nonce'] ) ), 'ross_portfolio_contact_action' ) ) {
+			$form_errors[] = __( 'Security verification failed. Please refresh and try again.', 'ross-portfolio' );
+		}
+	}
+
+	// 3. Honeypot check (hidden field to trap spam bots)
+	if ( empty( $form_errors ) && ! empty( $_POST['contact_secondary_verification'] ) ) {
 		// Bot detected: simulate success silently without processing
 		$form_success = true;
-	} else {
-		// 3. Sanitize inputs
-		$posted_data['contact_name']    = isset( $_POST['contact_name'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_name'] ) ) : '';
-		$posted_data['contact_email']   = isset( $_POST['contact_email'] ) ? sanitize_email( wp_unslash( $_POST['contact_email'] ) ) : '';
-		$posted_data['contact_subject'] = isset( $_POST['contact_subject'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_subject'] ) ) : '';
-		$posted_data['contact_service'] = isset( $_POST['contact_service'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_service'] ) ) : '';
-		$posted_data['contact_budget']  = isset( $_POST['contact_budget'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_budget'] ) ) : '';
-		$posted_data['contact_message'] = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['contact_message'] ) ) : '';
+	} elseif ( empty( $form_errors ) ) {
+		// 4. Sanitize inputs and strip CRLF / header injection attempts
+		$raw_name    = isset( $_POST['contact_name'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_name'] ) ) : '';
+		$raw_email   = isset( $_POST['contact_email'] ) ? sanitize_email( wp_unslash( $_POST['contact_email'] ) ) : '';
+		$raw_subject = isset( $_POST['contact_subject'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_subject'] ) ) : '';
+		$raw_service = isset( $_POST['contact_service'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_service'] ) ) : '';
+		$raw_budget  = isset( $_POST['contact_budget'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_budget'] ) ) : '';
+		$raw_message = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['contact_message'] ) ) : '';
 
-		// 4. Validate inputs
+		// Strip carriage returns and newlines from header fields to prevent SMTP header hijacking
+		$crlf_pattern = '/[\r\n\t]+/';
+		$posted_data['contact_name']    = preg_replace( $crlf_pattern, ' ', $raw_name );
+		$posted_data['contact_email']   = preg_replace( $crlf_pattern, '', $raw_email );
+		$posted_data['contact_subject'] = preg_replace( $crlf_pattern, ' ', $raw_subject );
+		$posted_data['contact_service'] = preg_replace( $crlf_pattern, ' ', $raw_service );
+		$posted_data['contact_budget']  = preg_replace( $crlf_pattern, ' ', $raw_budget );
+		$posted_data['contact_message'] = $raw_message;
+
+		// 5. Validate input length and format
 		if ( empty( $posted_data['contact_name'] ) ) {
 			$form_errors['contact_name'] = __( 'Please enter your name.', 'ross-portfolio' );
+		} elseif ( mb_strlen( $posted_data['contact_name'] ) > 100 ) {
+			$form_errors['contact_name'] = __( 'Name must be 100 characters or fewer.', 'ross-portfolio' );
 		}
 
 		if ( empty( $posted_data['contact_email'] ) || ! is_email( $posted_data['contact_email'] ) ) {
 			$form_errors['contact_email'] = __( 'Please provide a valid email address.', 'ross-portfolio' );
+		} elseif ( mb_strlen( $posted_data['contact_email'] ) > 100 ) {
+			$form_errors['contact_email'] = __( 'Email address must be 100 characters or fewer.', 'ross-portfolio' );
 		}
 
-		if ( empty( $posted_data['contact_message'] ) || strlen( $posted_data['contact_message'] ) < 10 ) {
+		if ( mb_strlen( $posted_data['contact_subject'] ) > 200 ) {
+			$form_errors['contact_subject'] = __( 'Subject must be 200 characters or fewer.', 'ross-portfolio' );
+		}
+
+		if ( empty( $posted_data['contact_message'] ) || mb_strlen( $posted_data['contact_message'] ) < 10 ) {
 			$form_errors['contact_message'] = __( 'Please enter a message of at least 10 characters.', 'ross-portfolio' );
+		} elseif ( mb_strlen( $posted_data['contact_message'] ) > 3000 ) {
+			$form_errors['contact_message'] = __( 'Message must not exceed 3,000 characters.', 'ross-portfolio' );
 		}
 
-		// 5. Send Email if validation passes
+		// 6. Send Email if validation passes
 		if ( empty( $form_errors ) ) {
+			// Increment rate limit transient (10 minute window)
+			set_transient( $rate_key, $rate_hits + 1, 10 * MINUTE_IN_SECONDS );
+
 			$recipient = get_theme_mod( 'profile_email', get_option( 'admin_email' ) );
 			$subject   = sprintf(
 				/* translators: 1: site name, 2: sender subject or name */
@@ -79,9 +112,13 @@ if ( 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['ross_portfolio_cont
 			$body .= "\nMessage:\n" . $posted_data['contact_message'] . "\n\n";
 			$body .= "---\nSent from: " . home_url();
 
+			// Strip potential control characters from From header name
+			$sender_name = sanitize_text_field( get_bloginfo( 'name' ) );
+			$from_email  = get_option( 'admin_email' ) ? sanitize_email( get_option( 'admin_email' ) ) : 'no-reply@' . wp_parse_url( home_url(), PHP_URL_HOST );
+
 			$headers = array(
 				'Content-Type: text/plain; charset=UTF-8',
-				'From: ' . get_bloginfo( 'name' ) . ' <' . ( get_option( 'admin_email' ) ?: 'no-reply@' . wp_parse_url( home_url(), PHP_URL_HOST ) ) . '>',
+				'From: ' . $sender_name . ' <' . $from_email . '>',
 				'Reply-To: ' . $posted_data['contact_name'] . ' <' . $posted_data['contact_email'] . '>',
 			);
 
