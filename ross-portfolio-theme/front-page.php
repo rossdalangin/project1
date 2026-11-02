@@ -100,34 +100,84 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 		<div class="hero-card-column">
 			<!-- Glass Profile / Identity Card -->
 			<div class="glass-card hero-profile-card">
-				<div class="hero-avatar-wrap">
-					<?php if ( ! empty( $profile['avatar_url'] ) ) : ?>
-						<img src="<?php echo esc_url( $profile['avatar_url'] ); ?>" alt="<?php echo esc_attr( $profile['display_name'] ); ?>" class="hero-avatar" />
-					<?php else : ?>
-						<div class="hero-avatar-placeholder" aria-hidden="true">
-							<?php echo esc_html( strtoupper( substr( $profile['display_name'], 0, 1 ) ) ); ?>
-						</div>
-					<?php endif; ?>
+				<div class="profile-card-topbar">
+					<div class="profile-card-status">
+						<span class="status-indicator-ping"></span>
+						<span class="status-indicator-dot"></span>
+						<span class="status-text"><?php esc_html_e( 'Available for Advisory', 'ross-portfolio' ); ?></span>
+					</div>
+					<div class="profile-card-chip">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+						<span><?php esc_html_e( 'Verified Architect', 'ross-portfolio' ); ?></span>
+					</div>
 				</div>
 
-				<h2 class="hero-profile-name"><?php echo esc_html( $profile['display_name'] ); ?></h2>
-				<p class="hero-profile-role"><?php echo esc_html( $profile['title'] ); ?></p>
+				<div class="profile-card-header">
+					<div class="hero-avatar-wrap">
+						<div class="hero-avatar-ring">
+							<?php if ( ! empty( $profile['avatar_url'] ) ) : ?>
+								<img src="<?php echo esc_url( $profile['avatar_url'] ); ?>" alt="<?php echo esc_attr( $profile['display_name'] ); ?>" class="hero-avatar" />
+							<?php else : ?>
+								<div class="hero-avatar-placeholder" aria-hidden="true">
+									<span><?php echo esc_html( strtoupper( substr( $profile['display_name'], 0, 1 ) ) ); ?></span>
+								</div>
+							<?php endif; ?>
+						</div>
+					</div>
+
+					<div class="profile-card-titles">
+						<h2 class="hero-profile-name">
+							<?php echo esc_html( $profile['display_name'] ); ?>
+							<svg class="verified-badge-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+						</h2>
+						<p class="hero-profile-role"><?php echo esc_html( $profile['title'] ); ?></p>
+					</div>
+				</div>
+
 				<p class="hero-profile-bio"><?php echo esc_html( $profile['bio'] ); ?></p>
 
 				<div class="hero-meta-list">
 					<?php if ( ! empty( $profile['location'] ) ) : ?>
 						<span class="hero-meta-item">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-							<?php echo esc_html( $profile['location'] ); ?>
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+							<span><?php echo esc_html( $profile['location'] ); ?></span>
 						</span>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $profile['email'] ) ) : ?>
-						<span class="hero-meta-item">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-							<?php echo esc_html( $profile['email'] ); ?>
-						</span>
+						<a href="<?php echo esc_url( 'mailto:' . $profile['email'] ); ?>" class="hero-meta-item hero-meta-link">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+							<span><?php echo esc_html( $profile['email'] ); ?></span>
+						</a>
 					<?php endif; ?>
+				</div>
+
+				<!-- Profile Card Action & Social Row -->
+				<div class="profile-card-footer">
+					<div class="profile-socials">
+						<?php if ( ! empty( $profile['github'] ) ) : ?>
+							<a href="<?php echo esc_url( $profile['github'] ); ?>" target="_blank" rel="noopener noreferrer" class="profile-social-link" aria-label="<?php esc_attr_e( 'GitHub Profile', 'ross-portfolio' ); ?>">
+								<?php echo wp_kses( ross_portfolio_get_social_svg( 'github' ), ross_portfolio_get_allowed_svg_tags() ); ?>
+							</a>
+						<?php endif; ?>
+
+						<?php if ( ! empty( $profile['linkedin'] ) ) : ?>
+							<a href="<?php echo esc_url( $profile['linkedin'] ); ?>" target="_blank" rel="noopener noreferrer" class="profile-social-link" aria-label="<?php esc_attr_e( 'LinkedIn Profile', 'ross-portfolio' ); ?>">
+								<?php echo wp_kses( ross_portfolio_get_social_svg( 'linkedin' ), ross_portfolio_get_allowed_svg_tags() ); ?>
+							</a>
+						<?php endif; ?>
+
+						<?php if ( ! empty( $profile['twitter'] ) ) : ?>
+							<a href="<?php echo esc_url( $profile['twitter'] ); ?>" target="_blank" rel="noopener noreferrer" class="profile-social-link" aria-label="<?php esc_attr_e( 'Twitter / X Profile', 'ross-portfolio' ); ?>">
+								<?php echo wp_kses( ross_portfolio_get_social_svg( 'twitter' ), ross_portfolio_get_allowed_svg_tags() ); ?>
+							</a>
+						<?php endif; ?>
+					</div>
+
+					<a href="<?php echo esc_url( $profile['hero_secondary_cta_url'] ); ?>" class="btn-secondary profile-contact-btn">
+						<span><?php esc_html_e( 'Connect', 'ross-portfolio' ); ?></span>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+					</a>
 				</div>
 			</div>
 		</div>
