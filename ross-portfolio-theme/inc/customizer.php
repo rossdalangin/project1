@@ -16,7 +16,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		array(
 			'priority'    => 10,
 			'title'       => __( 'Portfolio & Theme Styling', 'ross-portfolio' ),
-			'description' => __( 'Manage curated color palettes, owner profile details, mobile CTA, phone number, and FAQ items.', 'ross-portfolio' ),
+			'description' => __( 'Manage curated color palettes, owner profile details, all homepage sections, and FAQ items.', 'ross-portfolio' ),
 		)
 	);
 
@@ -59,7 +59,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'ross_portfolio_profile_section',
 		array(
-			'title'    => __( 'Owner Profile & Direct Contact', 'ross-portfolio' ),
+			'title'    => __( 'Owner Profile & Contact Info', 'ross-portfolio' ),
 			'panel'    => 'ross_portfolio_panel',
 			'priority' => 10,
 		)
@@ -131,7 +131,6 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Phone Number Control
 	$wp_customize->add_setting(
 		'profile_phone',
 		array(
@@ -143,7 +142,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		'profile_phone',
 		array(
 			'label'       => __( 'Direct Phone Number', 'ross-portfolio' ),
-			'description' => __( 'Displayed in the header and mobile navigation drawer for immediate calls.', 'ross-portfolio' ),
+			'description' => __( 'Displayed in the header, contact cards, and mobile drawer.', 'ross-portfolio' ),
 			'section'     => 'ross_portfolio_profile_section',
 			'type'        => 'text',
 		)
@@ -283,13 +282,29 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Section 4: Hero Headlines & CTA
+	// Section 4: Hero Section Content & Headlines
 	$wp_customize->add_section(
 		'ross_portfolio_hero_section',
 		array(
-			'title'    => __( 'Hero Headlines & CTA', 'ross-portfolio' ),
+			'title'    => __( 'Homepage: Hero Section', 'ross-portfolio' ),
 			'panel'    => 'ross_portfolio_panel',
 			'priority' => 30,
+		)
+	);
+
+	$wp_customize->add_setting(
+		'hero_badge_text',
+		array(
+			'default'           => 'Available for Q1 / Q2 Contracts & Architecture Advisory',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'hero_badge_text',
+		array(
+			'label'   => __( 'Availability Badge Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_hero_section',
+			'type'    => 'text',
 		)
 	);
 
@@ -335,7 +350,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 	$wp_customize->add_control(
 		'hero_cta_text',
 		array(
-			'label'   => __( 'Call to Action Button Text', 'ross-portfolio' ),
+			'label'   => __( 'Primary Call to Action Button Text', 'ross-portfolio' ),
 			'section' => 'ross_portfolio_hero_section',
 			'type'    => 'text',
 		)
@@ -351,20 +366,310 @@ function ross_portfolio_customize_register( $wp_customize ) {
 	$wp_customize->add_control(
 		'hero_cta_url',
 		array(
-			'label'   => __( 'Call to Action URL', 'ross-portfolio' ),
+			'label'   => __( 'Primary Call to Action URL', 'ross-portfolio' ),
 			'section' => 'ross_portfolio_hero_section',
 			'type'    => 'text',
 		)
 	);
 
-	// Section 5: FAQ Items
+	$wp_customize->add_setting(
+		'hero_secondary_cta_text',
+		array(
+			'default'           => 'Get in Touch',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'hero_secondary_cta_text',
+		array(
+			'label'   => __( 'Secondary Call to Action Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_hero_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'hero_secondary_cta_url',
+		array(
+			'default'           => '#contact',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'hero_secondary_cta_url',
+		array(
+			'label'   => __( 'Secondary Call to Action URL', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_hero_section',
+			'type'    => 'text',
+		)
+	);
+
+	// Section 5: Skills & Technical Expertise Section
+	$wp_customize->add_section(
+		'ross_portfolio_skills_section',
+		array(
+			'title'       => __( 'Homepage: Skills & Expertise Section', 'ross-portfolio' ),
+			'panel'       => 'ross_portfolio_panel',
+			'priority'    => 35,
+			'description' => __( 'Manage the title, badge tag, and skill items displayed on the homepage.', 'ross-portfolio' ),
+		)
+	);
+
+	$wp_customize->add_setting(
+		'skills_section_tag',
+		array(
+			'default'           => 'Core Capabilities',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'skills_section_tag',
+		array(
+			'label'   => __( 'Section Tag / Badge', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_skills_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'skills_section_title',
+		array(
+			'default'           => 'Technical Excellence & Architecture',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'skills_section_title',
+		array(
+			'label'   => __( 'Section Title', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_skills_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'portfolio_skills_json',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		)
+	);
+	$wp_customize->add_control(
+		'portfolio_skills_json',
+		array(
+			'label'       => __( 'Skills Cards (JSON)', 'ross-portfolio' ),
+			'description' => __( 'Optional custom JSON array of skills: [{"icon":"bolt|terminal|shield|search|layers|target", "title":"...", "desc":"..."}]. Leave empty to use default curated skills.', 'ross-portfolio' ),
+			'section'     => 'ross_portfolio_skills_section',
+			'type'        => 'textarea',
+		)
+	);
+
+	// Section 6: Featured Portfolio Projects Section
+	$wp_customize->add_section(
+		'ross_portfolio_projects_section',
+		array(
+			'title'       => __( 'Homepage: Featured Projects Section', 'ross-portfolio' ),
+			'panel'       => 'ross_portfolio_panel',
+			'priority'    => 40,
+			'description' => __( 'Manage section headings and project count displayed on the homepage.', 'ross-portfolio' ),
+		)
+	);
+
+	$wp_customize->add_setting(
+		'projects_section_tag',
+		array(
+			'default'           => 'Featured Work',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'projects_section_tag',
+		array(
+			'label'   => __( 'Section Tag / Badge', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_projects_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'projects_section_title',
+		array(
+			'default'           => 'Engineered Case Studies',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'projects_section_title',
+		array(
+			'label'   => __( 'Section Title', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_projects_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'projects_count',
+		array(
+			'default'           => 6,
+			'sanitize_callback' => 'absint',
+		)
+	);
+	$wp_customize->add_control(
+		'projects_count',
+		array(
+			'label'   => __( 'Number of Projects to Display', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_projects_section',
+			'type'    => 'number',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'projects_empty_text',
+		array(
+			'default'           => 'No portfolio projects found.',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'projects_empty_text',
+		array(
+			'label'   => __( 'Empty State Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_projects_section',
+			'type'    => 'text',
+		)
+	);
+
+	// Section 7: Direct Contact Showcase Section
+	$wp_customize->add_section(
+		'ross_portfolio_contact_section',
+		array(
+			'title'       => __( 'Homepage: Direct Contact Showcase Section', 'ross-portfolio' ),
+			'panel'       => 'ross_portfolio_panel',
+			'priority'    => 45,
+			'description' => __( 'Manage all headings, copy, and buttons for the homepage direct contact showcase.', 'ross-portfolio' ),
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_section_tag',
+		array(
+			'default'           => 'Initiate Contact',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_section_tag',
+		array(
+			'label'   => __( 'Section Tag / Badge', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_contact_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_section_headline',
+		array(
+			'default'           => "Let's Architect Something Exceptional Together",
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_section_headline',
+		array(
+			'label'   => __( 'Section Headline', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_contact_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_section_desc',
+		array(
+			'default'           => 'Available for technical consultations, bespoke WordPress theme engineering, performance optimizations, and accessible enterprise design systems.',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_section_desc',
+		array(
+			'label'   => __( 'Section Description / Copy', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_contact_section',
+			'type'    => 'textarea',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_email_btn_text',
+		array(
+			'default'           => 'Send Direct Email',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_email_btn_text',
+		array(
+			'label'   => __( 'Email Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_contact_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_phone_btn_text',
+		array(
+			'default'           => 'Call Direct',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_phone_btn_text',
+		array(
+			'label'   => __( 'Phone Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_contact_section',
+			'type'    => 'text',
+		)
+	);
+
+	// Section 8: FAQ Accordion Section
 	$wp_customize->add_section(
 		'ross_portfolio_faq_section',
 		array(
-			'title'       => __( 'FAQ Accordion Items', 'ross-portfolio' ),
+			'title'       => __( 'Homepage: FAQ Accordion Section', 'ross-portfolio' ),
 			'panel'       => 'ross_portfolio_panel',
-			'priority'    => 40,
-			'description' => __( 'Custom JSON format array of FAQ objects: [{"question":"...", "answer":"..."}]', 'ross-portfolio' ),
+			'priority'    => 50,
+			'description' => __( 'Manage FAQ section titles and custom items in JSON format.', 'ross-portfolio' ),
+		)
+	);
+
+	$wp_customize->add_setting(
+		'faq_section_tag',
+		array(
+			'default'           => 'FAQ',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'faq_section_tag',
+		array(
+			'label'   => __( 'Section Tag / Badge', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_faq_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'faq_section_title',
+		array(
+			'default'           => 'Frequently Asked Questions',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'faq_section_title',
+		array(
+			'label'   => __( 'Section Title', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_faq_section',
+			'type'    => 'text',
 		)
 	);
 
@@ -379,7 +684,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		'portfolio_faqs_json',
 		array(
 			'label'       => __( 'FAQ Accordion Data (JSON)', 'ross-portfolio' ),
-			'description' => __( 'Leave empty to use default FAQ items.', 'ross-portfolio' ),
+			'description' => __( 'Optional custom JSON array: [{"question":"...", "answer":"..."}]. Leave empty to use default FAQ items.', 'ross-portfolio' ),
 			'section'     => 'ross_portfolio_faq_section',
 			'type'        => 'textarea',
 		)

@@ -86,23 +86,72 @@ function ross_portfolio_get_style_presets() {
 
 function ross_portfolio_get_profile_details() {
 	return array(
-		'display_name'   => ross_portfolio_get_option( 'profile_display_name', 'Ross' ),
-		'title'          => ross_portfolio_get_option( 'profile_title', 'Principal Theme Architect & Front-End Performance Lead' ),
-		'location'       => ross_portfolio_get_option( 'profile_location', 'San Francisco, CA' ),
-		'email'          => ross_portfolio_get_option( 'profile_email', 'ross@example.com' ),
-		'phone'          => ross_portfolio_get_option( 'profile_phone', '+1 (555) 019-2834' ),
-		'github'         => ross_portfolio_get_option( 'profile_github', 'https://github.com' ),
-		'linkedin'       => ross_portfolio_get_option( 'profile_linkedin', 'https://linkedin.com' ),
-		'twitter'        => ross_portfolio_get_option( 'profile_twitter', 'https://twitter.com' ),
-		'avatar_url'     => ross_portfolio_get_option( 'profile_avatar_url', '' ),
-		'bio'            => ross_portfolio_get_option( 'profile_bio', 'Passionate software engineer focused on ultra-performant, accessible web architectures, custom WordPress systems, and modern glassmorphism design.' ),
-		'hero_headline'  => ross_portfolio_get_option( 'hero_headline', 'Building Modern, Performant Digital Experiences' ),
-		'hero_subhead'   => ross_portfolio_get_option( 'hero_subhead', 'Classic WordPress engineering without bloated plugins or dependencies.' ),
-		'hero_cta_text'  => ross_portfolio_get_option( 'hero_cta_text', 'View Portfolio Projects' ),
-		'hero_cta_url'   => ross_portfolio_get_option( 'hero_cta_url', '#projects' ),
-		'header_cta_text'=> ross_portfolio_get_option( 'header_cta_text', 'Let\'s Talk' ),
-		'header_cta_url' => ross_portfolio_get_option( 'header_cta_url', '#contact' ),
-		'style_preset'   => ross_portfolio_get_option( 'theme_style_preset', 'obsidian-cyber' ),
+		'display_name'           => ross_portfolio_get_option( 'profile_display_name', 'Ross' ),
+		'title'                  => ross_portfolio_get_option( 'profile_title', 'Principal Theme Architect & Front-End Performance Lead' ),
+		'location'               => ross_portfolio_get_option( 'profile_location', 'San Francisco, CA' ),
+		'email'                  => ross_portfolio_get_option( 'profile_email', 'ross@example.com' ),
+		'phone'                  => ross_portfolio_get_option( 'profile_phone', '+1 (555) 019-2834' ),
+		'github'                 => ross_portfolio_get_option( 'profile_github', 'https://github.com' ),
+		'linkedin'               => ross_portfolio_get_option( 'profile_linkedin', 'https://linkedin.com' ),
+		'twitter'                => ross_portfolio_get_option( 'profile_twitter', 'https://twitter.com' ),
+		'avatar_url'             => ross_portfolio_get_option( 'profile_avatar_url', '' ),
+		'bio'                    => ross_portfolio_get_option( 'profile_bio', 'Passionate software engineer focused on ultra-performant, accessible web architectures, custom WordPress systems, and modern glassmorphism design.' ),
+		'hero_badge_text'        => ross_portfolio_get_option( 'hero_badge_text', 'Available for Q1 / Q2 Contracts & Architecture Advisory' ),
+		'hero_headline'          => ross_portfolio_get_option( 'hero_headline', 'Building Modern, Performant Digital Experiences' ),
+		'hero_subhead'           => ross_portfolio_get_option( 'hero_subhead', 'Classic WordPress engineering without bloated plugins or dependencies.' ),
+		'hero_cta_text'          => ross_portfolio_get_option( 'hero_cta_text', 'View Portfolio Projects' ),
+		'hero_cta_url'           => ross_portfolio_get_option( 'hero_cta_url', '#projects' ),
+		'hero_secondary_cta_text'=> ross_portfolio_get_option( 'hero_secondary_cta_text', 'Get in Touch' ),
+		'hero_secondary_cta_url' => ross_portfolio_get_option( 'hero_secondary_cta_url', '#contact' ),
+		'header_cta_text'        => ross_portfolio_get_option( 'header_cta_text', "Let's Talk" ),
+		'header_cta_url'         => ross_portfolio_get_option( 'header_cta_url', '#contact' ),
+		'style_preset'           => ross_portfolio_get_option( 'theme_style_preset', 'obsidian-cyber' ),
+	);
+}
+
+/**
+ * Get Skills Section Configuration and List
+ */
+function ross_portfolio_get_skills() {
+	$skills_json = get_theme_mod( 'portfolio_skills_json', '' );
+	if ( ! empty( $skills_json ) ) {
+		$decoded = json_decode( $skills_json, true );
+		if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+			return $decoded;
+		}
+	}
+
+	return array(
+		array(
+			'icon'  => 'terminal',
+			'title' => __( 'Zero-Dependency Vanilla JS', 'ross-portfolio' ),
+			'desc'  => __( 'Pure ES6+ JavaScript engineered for maximum execution speed, zero third-party dependencies, and zero render-blocking assets.', 'ross-portfolio' ),
+		),
+		array(
+			'icon'  => 'bolt',
+			'title' => __( '100/100 Core Web Vitals', 'ross-portfolio' ),
+			'desc'  => __( 'Native system font stacks, optimized critical CSS rendering, zero layout shift (CLS), and sub-100ms Largest Contentful Paint (LCP).', 'ross-portfolio' ),
+		),
+		array(
+			'icon'  => 'target',
+			'title' => __( 'WCAG 2.2 AA Accessibility', 'ross-portfolio' ),
+			'desc'  => __( 'Full keyboard focus trapping, ARIA live regions, explicit :focus-visible outlines, and screen reader semantic landmarks.', 'ross-portfolio' ),
+		),
+		array(
+			'icon'  => 'shield',
+			'title' => __( 'Enterprise Security', 'ross-portfolio' ),
+			'desc'  => __( 'Strict ABSPATH protection, comprehensive sanitization, SVG whitelisting, and strict security HTTP headers.', 'ross-portfolio' ),
+		),
+		array(
+			'icon'  => 'search',
+			'title' => __( 'AEO & GEO Optimization', 'ross-portfolio' ),
+			'desc'  => __( 'Deep JSON-LD structured schema integration for AI answer engines (Perplexity, ChatGPT) and search graphs.', 'ross-portfolio' ),
+		),
+		array(
+			'icon'  => 'layers',
+			'title' => __( 'Modern Glassmorphism UI', 'ross-portfolio' ),
+			'desc'  => __( 'Multi-layered backdrop-filters, subtle high-contrast borders, ambient radial glows, and 6 curated color themes.', 'ross-portfolio' ),
+		),
 	);
 }
 
@@ -175,6 +224,33 @@ function ross_portfolio_get_allowed_svg_tags() {
 			'points' => true,
 		),
 	);
+}
+
+function ross_portfolio_get_icon_svg( $icon ) {
+	$raw_svg = '';
+	switch ( strtolower( $icon ) ) {
+		case 'terminal':
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>';
+			break;
+		case 'bolt':
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+			break;
+		case 'target':
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>';
+			break;
+		case 'shield':
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+			break;
+		case 'search':
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+			break;
+		case 'layers':
+		default:
+			$raw_svg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>';
+			break;
+	}
+
+	return wp_kses( $raw_svg, ross_portfolio_get_allowed_svg_tags() );
 }
 
 function ross_portfolio_get_social_svg( $service ) {
