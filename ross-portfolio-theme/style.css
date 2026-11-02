@@ -29,7 +29,8 @@ Tags: portfolio, dark-mode, glassmorphism, responsive, customizer, accessible, s
   --surface-glass-hover: rgba(28, 39, 58, 0.75);
   --surface-glass-active: rgba(35, 48, 70, 0.90);
 
-  --border-glass: rgba(255, 255, 255, 0.09);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-subtle: rgba(255, 255, 255, 0.05);
   --border-glass-light: rgba(255, 255, 255, 0.18);
   --border-glass-glow: rgba(96, 165, 250, 0.35);
 
