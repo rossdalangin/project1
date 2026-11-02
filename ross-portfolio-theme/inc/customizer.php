@@ -16,7 +16,7 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		array(
 			'priority'    => 10,
 			'title'       => __( 'Portfolio & Theme Styling', 'ross-portfolio' ),
-			'description' => __( 'Manage curated color palettes, owner profile details, all homepage sections, and FAQ items.', 'ross-portfolio' ),
+			'description' => __( 'Manage curated color palettes, profile details, homepage sections, CTAs, skills, and FAQ items without JSON.', 'ross-portfolio' ),
 		)
 	);
 
@@ -404,14 +404,14 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Section 5: Skills & Technical Expertise Section
+	// Section 5: Skills & Technical Expertise Section (No JSON, Text & Image / Icon Fields)
 	$wp_customize->add_section(
 		'ross_portfolio_skills_section',
 		array(
 			'title'       => __( 'Homepage: Skills & Expertise Section', 'ross-portfolio' ),
 			'panel'       => 'ross_portfolio_panel',
 			'priority'    => 35,
-			'description' => __( 'Manage the title, badge tag, and skill items displayed on the homepage.', 'ross-portfolio' ),
+			'description' => __( 'Manage section headings and individual skill cards with text and images.', 'ross-portfolio' ),
 		)
 	);
 
@@ -447,22 +447,121 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	$wp_customize->add_setting(
-		'portfolio_skills_json',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_textarea_field',
-		)
+	$default_skills = array(
+		1 => array(
+			'title' => 'Zero-Dependency Vanilla JS',
+			'desc'  => 'Pure ES6+ JavaScript engineered for maximum execution speed, zero third-party dependencies, and zero render-blocking assets.',
+			'icon'  => 'terminal',
+		),
+		2 => array(
+			'title' => '100/100 Core Web Vitals',
+			'desc'  => 'Native system font stacks, optimized critical CSS rendering, zero layout shift (CLS), and sub-100ms Largest Contentful Paint (LCP).',
+			'icon'  => 'bolt',
+		),
+		3 => array(
+			'title' => 'WCAG 2.2 AA Accessibility',
+			'desc'  => 'Full keyboard focus trapping, ARIA live regions, explicit :focus-visible outlines, and screen reader semantic landmarks.',
+			'icon'  => 'target',
+		),
+		4 => array(
+			'title' => 'Enterprise Security',
+			'desc'  => 'Strict ABSPATH protection, comprehensive sanitization, SVG whitelisting, and strict security HTTP headers.',
+			'icon'  => 'shield',
+		),
+		5 => array(
+			'title' => 'AEO & GEO Optimization',
+			'desc'  => 'Deep JSON-LD structured schema integration for AI answer engines (Perplexity, ChatGPT) and search graphs.',
+			'icon'  => 'search',
+		),
+		6 => array(
+			'title' => 'Modern Glassmorphism UI',
+			'desc'  => 'Multi-layered backdrop-filters, subtle high-contrast borders, ambient radial glows, and 6 curated color themes.',
+			'icon'  => 'layers',
+		),
 	);
-	$wp_customize->add_control(
-		'portfolio_skills_json',
-		array(
-			'label'       => __( 'Skills Cards (JSON)', 'ross-portfolio' ),
-			'description' => __( 'Optional custom JSON array of skills: [{"icon":"bolt|terminal|shield|search|layers|target", "title":"...", "desc":"..."}]. Leave empty to use default curated skills.', 'ross-portfolio' ),
-			'section'     => 'ross_portfolio_skills_section',
-			'type'        => 'textarea',
-		)
+
+	$icon_choices = array(
+		'terminal' => __( 'Terminal / Code Prompt', 'ross-portfolio' ),
+		'bolt'     => __( 'Lightning Bolt / Speed', 'ross-portfolio' ),
+		'target'   => __( 'Target / Accessibility', 'ross-portfolio' ),
+		'shield'   => __( 'Shield / Security', 'ross-portfolio' ),
+		'search'   => __( 'Search / AEO SEO', 'ross-portfolio' ),
+		'layers'   => __( 'Layers / Modern Glass UI', 'ross-portfolio' ),
 	);
+
+	for ( $i = 1; $i <= 6; $i++ ) {
+		// Skill Title
+		$wp_customize->add_setting(
+			"skill_{$i}_title",
+			array(
+				'default'           => $default_skills[ $i ]['title'],
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		$wp_customize->add_control(
+			"skill_{$i}_title",
+			array(
+				'label'       => sprintf( __( 'Skill #%d: Title', 'ross-portfolio' ), $i ),
+				'section'     => 'ross_portfolio_skills_section',
+				'type'        => 'text',
+			)
+		);
+
+		// Skill Description
+		$wp_customize->add_setting(
+			"skill_{$i}_desc",
+			array(
+				'default'           => $default_skills[ $i ]['desc'],
+				'sanitize_callback' => 'sanitize_textarea_field',
+			)
+		);
+		$wp_customize->add_control(
+			"skill_{$i}_desc",
+			array(
+				'label'       => sprintf( __( 'Skill #%d: Description', 'ross-portfolio' ), $i ),
+				'section'     => 'ross_portfolio_skills_section',
+				'type'        => 'textarea',
+			)
+		);
+
+		// Skill Icon Choice
+		$wp_customize->add_setting(
+			"skill_{$i}_icon",
+			array(
+				'default'           => $default_skills[ $i ]['icon'],
+				'sanitize_callback' => 'sanitize_key',
+			)
+		);
+		$wp_customize->add_control(
+			"skill_{$i}_icon",
+			array(
+				'label'       => sprintf( __( 'Skill #%d: Standard Icon', 'ross-portfolio' ), $i ),
+				'section'     => 'ross_portfolio_skills_section',
+				'type'        => 'select',
+				'choices'     => $icon_choices,
+			)
+		);
+
+		// Skill Custom Image / Badge
+		$wp_customize->add_setting(
+			"skill_{$i}_image",
+			array(
+				'default'           => '',
+				'sanitize_callback' => 'esc_url_raw',
+			)
+		);
+		$wp_customize->add_control(
+			new WP_Customize_Image_Control(
+				$wp_customize,
+				"skill_{$i}_image",
+				array(
+					'label'       => sprintf( __( 'Skill #%d: Custom Image / Icon (Optional)', 'ross-portfolio' ), $i ),
+					'description' => __( 'Upload a custom PNG/SVG image icon to override the default SVG icon.', 'ross-portfolio' ),
+					'section'     => 'ross_portfolio_skills_section',
+				)
+			)
+		);
+	}
 
 	// Section 6: Featured Portfolio Projects Section
 	$wp_customize->add_section(
@@ -539,7 +638,146 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Section 7: Direct Contact Showcase Section
+	// Section 7: The Best High-Converting Standout Call To Action (CTA) Section
+	$wp_customize->add_section(
+		'ross_portfolio_standout_cta_section',
+		array(
+			'title'       => __( 'Homepage: Standout Call To Action (Best CTA)', 'ross-portfolio' ),
+			'panel'       => 'ross_portfolio_panel',
+			'priority'    => 42,
+			'description' => __( 'Configure the standout, high-converting Call To Action banner featured on the homepage.', 'ross-portfolio' ),
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_tag',
+		array(
+			'default'           => 'Ready to Scale?',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_tag',
+		array(
+			'label'   => __( 'CTA Badge / Pill Tag', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_heading',
+		array(
+			'default'           => 'Transform Your Web Architecture into a High-Converting Engine',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_heading',
+		array(
+			'label'   => __( 'CTA Main Headline', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_desc',
+		array(
+			'default'           => 'Stop losing revenue and users to bloated plugins and sluggish load times. Partner directly with an elite frontend architect to build custom, ultra-fast WordPress applications.',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_desc',
+		array(
+			'label'   => __( 'CTA Subtitle / Value Proposition', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'textarea',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_primary_btn_text',
+		array(
+			'default'           => 'Schedule Architecture Review',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_primary_btn_text',
+		array(
+			'label'   => __( 'Primary CTA Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_primary_btn_url',
+		array(
+			'default'           => '#contact',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_primary_btn_url',
+		array(
+			'label'   => __( 'Primary CTA Button URL', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_secondary_btn_text',
+		array(
+			'default'           => 'Explore Case Studies',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_secondary_btn_text',
+		array(
+			'label'   => __( 'Secondary CTA Button Text', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_secondary_btn_url',
+		array(
+			'default'           => '#projects',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_secondary_btn_url',
+		array(
+			'label'   => __( 'Secondary CTA Button URL', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'standout_cta_trust_note',
+		array(
+			'default'           => 'Guaranteed 95+ Core Web Vitals score • Strict WCAG 2.2 AA accessibility • Zero dependency guarantee',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'standout_cta_trust_note',
+		array(
+			'label'   => __( 'Trust Badges / Guarantee Note', 'ross-portfolio' ),
+			'section' => 'ross_portfolio_standout_cta_section',
+			'type'    => 'text',
+		)
+	);
+
+	// Section 8: Direct Contact Showcase Section
 	$wp_customize->add_section(
 		'ross_portfolio_contact_section',
 		array(
@@ -630,14 +868,14 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	// Section 8: FAQ Accordion Section
+	// Section 9: FAQ Accordion Section (No JSON, 4 Individual Question & Answer Controls)
 	$wp_customize->add_section(
 		'ross_portfolio_faq_section',
 		array(
 			'title'       => __( 'Homepage: FAQ Accordion Section', 'ross-portfolio' ),
 			'panel'       => 'ross_portfolio_panel',
 			'priority'    => 50,
-			'description' => __( 'Manage FAQ section titles and custom items in JSON format.', 'ross-portfolio' ),
+			'description' => __( 'Manage FAQ section titles and questions directly with text controls (no JSON required).', 'ross-portfolio' ),
 		)
 	);
 
@@ -673,21 +911,57 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
-	$wp_customize->add_setting(
-		'portfolio_faqs_json',
-		array(
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_textarea_field',
-		)
+	$default_faqs = array(
+		1 => array(
+			'q' => 'How is high performance achieved without external dependencies?',
+			'a' => 'By utilizing native browser features, CSS custom properties, system font stacks, and zero external JS/CSS libraries. Assets are lightweight and render-blocking requests are completely avoided.',
+		),
+		2 => array(
+			'q' => 'Is this theme fully WCAG 2.2 AA accessible?',
+			'a' => 'Yes. It features explicit focus management, full keyboard navigation traps for mobile menus, clear :focus-visible indicators, skip navigation links, and sufficient color contrast.',
+		),
+		3 => array(
+			'q' => 'Can page content and profile details be edited without coding?',
+			'a' => 'Absolutely. All owner profile details, social links, hero headlines, skills, call to action, and FAQ items are manageable via native WordPress Customizer controls.',
+		),
+		4 => array(
+			'q' => 'Does this theme support WordPress Gutenberg blocks?',
+			'a' => 'Yes. Full block alignment, editor stylesheets, and native color palette tokens are specified via theme.json and setup.php.',
+		),
 	);
-	$wp_customize->add_control(
-		'portfolio_faqs_json',
-		array(
-			'label'       => __( 'FAQ Accordion Data (JSON)', 'ross-portfolio' ),
-			'description' => __( 'Optional custom JSON array: [{"question":"...", "answer":"..."}]. Leave empty to use default FAQ items.', 'ross-portfolio' ),
-			'section'     => 'ross_portfolio_faq_section',
-			'type'        => 'textarea',
-		)
-	);
+
+	for ( $j = 1; $j <= 4; $j++ ) {
+		$wp_customize->add_setting(
+			"faq_{$j}_question",
+			array(
+				'default'           => $default_faqs[ $j ]['q'],
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
+		$wp_customize->add_control(
+			"faq_{$j}_question",
+			array(
+				'label'   => sprintf( __( 'FAQ #%d: Question', 'ross-portfolio' ), $j ),
+				'section' => 'ross_portfolio_faq_section',
+				'type'    => 'text',
+			)
+		);
+
+		$wp_customize->add_setting(
+			"faq_{$j}_answer",
+			array(
+				'default'           => $default_faqs[ $j ]['a'],
+				'sanitize_callback' => 'sanitize_textarea_field',
+			)
+		);
+		$wp_customize->add_control(
+			"faq_{$j}_answer",
+			array(
+				'label'   => sprintf( __( 'FAQ #%d: Answer', 'ross-portfolio' ), $j ),
+				'section' => 'ross_portfolio_faq_section',
+				'type'    => 'textarea',
+			)
+		);
+	}
 }
 add_action( 'customize_register', 'ross_portfolio_customize_register' );

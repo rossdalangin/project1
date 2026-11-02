@@ -1,6 +1,6 @@
 <?php
 /**
- * Theme Setup Configuration & Security Hardening Hooks
+ * Theme Setup Configuration, Sidebars & Security Hardening Hooks
  *
  * @package RossPortfolio
  */
@@ -56,6 +56,24 @@ if ( ! function_exists( 'ross_portfolio_setup' ) ) :
 	}
 endif;
 add_action( 'after_setup_theme', 'ross_portfolio_setup' );
+
+/**
+ * Register Widget Areas / Sidebars
+ */
+function ross_portfolio_widgets_init() {
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Blog Right Sidebar', 'ross-portfolio' ),
+			'id'            => 'sidebar-1',
+			'description'   => esc_html__( 'Add widgets here to appear in the right sidebar of blog posts and blog archives.', 'ross-portfolio' ),
+			'before_widget' => '<section id="%1$s" class="glass-card widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		)
+	);
+}
+add_action( 'widgets_init', 'ross_portfolio_widgets_init' );
 
 /**
  * Security Hardening: Remove WP version generator and discovery tags.

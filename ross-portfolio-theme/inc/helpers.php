@@ -110,78 +110,99 @@ function ross_portfolio_get_profile_details() {
 }
 
 /**
- * Get Skills Section Configuration and List
+ * Get Skills List from Individual Customizer Controls (No JSON)
  */
 function ross_portfolio_get_skills() {
-	$skills_json = get_theme_mod( 'portfolio_skills_json', '' );
-	if ( ! empty( $skills_json ) ) {
-		$decoded = json_decode( $skills_json, true );
-		if ( is_array( $decoded ) && ! empty( $decoded ) ) {
-			return $decoded;
-		}
-	}
-
-	return array(
-		array(
-			'icon'  => 'terminal',
+	$default_skills = array(
+		1 => array(
 			'title' => __( 'Zero-Dependency Vanilla JS', 'ross-portfolio' ),
 			'desc'  => __( 'Pure ES6+ JavaScript engineered for maximum execution speed, zero third-party dependencies, and zero render-blocking assets.', 'ross-portfolio' ),
+			'icon'  => 'terminal',
 		),
-		array(
-			'icon'  => 'bolt',
+		2 => array(
 			'title' => __( '100/100 Core Web Vitals', 'ross-portfolio' ),
 			'desc'  => __( 'Native system font stacks, optimized critical CSS rendering, zero layout shift (CLS), and sub-100ms Largest Contentful Paint (LCP).', 'ross-portfolio' ),
+			'icon'  => 'bolt',
 		),
-		array(
-			'icon'  => 'target',
+		3 => array(
 			'title' => __( 'WCAG 2.2 AA Accessibility', 'ross-portfolio' ),
 			'desc'  => __( 'Full keyboard focus trapping, ARIA live regions, explicit :focus-visible outlines, and screen reader semantic landmarks.', 'ross-portfolio' ),
+			'icon'  => 'target',
 		),
-		array(
-			'icon'  => 'shield',
+		4 => array(
 			'title' => __( 'Enterprise Security', 'ross-portfolio' ),
 			'desc'  => __( 'Strict ABSPATH protection, comprehensive sanitization, SVG whitelisting, and strict security HTTP headers.', 'ross-portfolio' ),
+			'icon'  => 'shield',
 		),
-		array(
-			'icon'  => 'search',
+		5 => array(
 			'title' => __( 'AEO & GEO Optimization', 'ross-portfolio' ),
 			'desc'  => __( 'Deep JSON-LD structured schema integration for AI answer engines (Perplexity, ChatGPT) and search graphs.', 'ross-portfolio' ),
+			'icon'  => 'search',
 		),
-		array(
-			'icon'  => 'layers',
+		6 => array(
 			'title' => __( 'Modern Glassmorphism UI', 'ross-portfolio' ),
 			'desc'  => __( 'Multi-layered backdrop-filters, subtle high-contrast borders, ambient radial glows, and 6 curated color themes.', 'ross-portfolio' ),
+			'icon'  => 'layers',
 		),
 	);
-}
 
-function ross_portfolio_get_faqs() {
-	$faqs_json = get_theme_mod( 'portfolio_faqs_json', '' );
-	if ( ! empty( $faqs_json ) ) {
-		$decoded = json_decode( $faqs_json, true );
-		if ( is_array( $decoded ) && ! empty( $decoded ) ) {
-			return $decoded;
+	$skills = array();
+	for ( $i = 1; $i <= 6; $i++ ) {
+		$title = ross_portfolio_get_option( "skill_{$i}_title", $default_skills[ $i ]['title'] );
+		$desc  = ross_portfolio_get_option( "skill_{$i}_desc", $default_skills[ $i ]['desc'] );
+		$icon  = ross_portfolio_get_option( "skill_{$i}_icon", $default_skills[ $i ]['icon'] );
+		$image = ross_portfolio_get_option( "skill_{$i}_image", '' );
+
+		if ( ! empty( $title ) ) {
+			$skills[] = array(
+				'title' => $title,
+				'desc'  => $desc,
+				'icon'  => $icon,
+				'image' => $image,
+			);
 		}
 	}
 
-	return array(
-		array(
-			'question' => 'How is high performance achieved without external dependencies?',
-			'answer'   => 'By utilizing native browser features, CSS custom properties, system font stacks, and zero external JS/CSS libraries. Assets are lightweight and render-blocking requests are completely avoided.',
+	return $skills;
+}
+
+/**
+ * Get FAQs List from Individual Customizer Controls (No JSON)
+ */
+function ross_portfolio_get_faqs() {
+	$default_faqs = array(
+		1 => array(
+			'q' => __( 'How is high performance achieved without external dependencies?', 'ross-portfolio' ),
+			'a' => __( 'By utilizing native browser features, CSS custom properties, system font stacks, and zero external JS/CSS libraries. Assets are lightweight and render-blocking requests are completely avoided.', 'ross-portfolio' ),
 		),
-		array(
-			'question' => 'Is this theme fully WCAG 2.2 AA accessible?',
-			'answer'   => 'Yes. It features explicit focus management, full keyboard navigation traps for mobile menus, clear :focus-visible indicators, skip navigation links, and sufficient color contrast.',
+		2 => array(
+			'q' => __( 'Is this theme fully WCAG 2.2 AA accessible?', 'ross-portfolio' ),
+			'a' => __( 'Yes. It features explicit focus management, full keyboard navigation traps for mobile menus, clear :focus-visible indicators, skip navigation links, and sufficient color contrast.', 'ross-portfolio' ),
 		),
-		array(
-			'question' => 'Can page content and profile details be edited without coding?',
-			'answer'   => 'Absolutely. All owner profile details, social links, hero headlines, and FAQ items are manageable via native WordPress Customizer controls.',
+		3 => array(
+			'q' => __( 'Can page content and profile details be edited without coding?', 'ross-portfolio' ),
+			'a' => __( 'Absolutely. All owner profile details, social links, hero headlines, skills, call to action, and FAQ items are manageable via native WordPress Customizer controls.', 'ross-portfolio' ),
 		),
-		array(
-			'question' => 'Does this theme support WordPress Gutenberg blocks?',
-			'answer'   => 'Yes. Full block alignment, editor stylesheets, and native color palette tokens are specified via theme.json and setup.php.',
+		4 => array(
+			'q' => __( 'Does this theme support WordPress Gutenberg blocks?', 'ross-portfolio' ),
+			'a' => __( 'Yes. Full block alignment, editor stylesheets, and native color palette tokens are specified via theme.json and setup.php.', 'ross-portfolio' ),
 		),
 	);
+
+	$faqs = array();
+	for ( $j = 1; $j <= 4; $j++ ) {
+		$question = ross_portfolio_get_option( "faq_{$j}_question", $default_faqs[ $j ]['q'] );
+		$answer   = ross_portfolio_get_option( "faq_{$j}_answer", $default_faqs[ $j ]['a'] );
+
+		if ( ! empty( $question ) && ! empty( $answer ) ) {
+			$faqs[] = array(
+				'question' => $question,
+				'answer'   => $answer,
+			);
+		}
+	}
+
+	return $faqs;
 }
 
 function ross_portfolio_get_allowed_svg_tags() {
@@ -221,6 +242,9 @@ function ross_portfolio_get_allowed_svg_tags() {
 			'y2' => true,
 		),
 		'polyline' => array(
+			'points' => true,
+		),
+		'polygon'  => array(
 			'points' => true,
 		),
 	);

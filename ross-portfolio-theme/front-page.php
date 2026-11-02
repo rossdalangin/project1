@@ -24,12 +24,24 @@ $projects_title    = ross_portfolio_get_option( 'projects_section_title', __( 'E
 $projects_count    = absint( ross_portfolio_get_option( 'projects_count', 6 ) );
 $projects_empty    = ross_portfolio_get_option( 'projects_empty_text', __( 'No portfolio projects found.', 'ross-portfolio' ) );
 
+// Standout High-Converting CTA Section Controls
+$cta_tag           = ross_portfolio_get_option( 'standout_cta_tag', __( 'Ready to Scale?', 'ross-portfolio' ) );
+$cta_heading       = ross_portfolio_get_option( 'standout_cta_headline', __( 'Transform Your Web Architecture into a High-Converting Engine', 'ross-portfolio' ) );
+$cta_desc          = ross_portfolio_get_option( 'standout_cta_desc', __( 'Stop losing revenue and users to bloated plugins and sluggish load times. Partner directly with an elite frontend architect to build custom, ultra-fast WordPress applications.', 'ross-portfolio' ) );
+$cta_primary_btn   = ross_portfolio_get_option( 'standout_cta_primary_btn_text', __( 'Schedule Architecture Review', 'ross-portfolio' ) );
+$cta_primary_url   = ross_portfolio_get_option( 'standout_cta_primary_btn_url', '#contact' );
+$cta_second_btn    = ross_portfolio_get_option( 'standout_cta_secondary_btn_text', __( 'Explore Case Studies', 'ross-portfolio' ) );
+$cta_second_url    = ross_portfolio_get_option( 'standout_cta_secondary_btn_url', '#projects' );
+$cta_trust_note    = ross_portfolio_get_option( 'standout_cta_trust_note', __( 'Guaranteed 95+ Core Web Vitals score • Strict WCAG 2.2 AA accessibility • Zero dependency guarantee', 'ross-portfolio' ) );
+
+// Direct Contact Showcase Controls
 $contact_tag       = ross_portfolio_get_option( 'contact_section_tag', __( 'Initiate Contact', 'ross-portfolio' ) );
 $contact_headline  = ross_portfolio_get_option( 'contact_section_headline', __( "Let's Architect Something Exceptional Together", 'ross-portfolio' ) );
 $contact_desc      = ross_portfolio_get_option( 'contact_section_desc', __( 'Available for technical consultations, bespoke WordPress theme engineering, performance optimizations, and accessible enterprise design systems.', 'ross-portfolio' ) );
 $contact_email_btn = ross_portfolio_get_option( 'contact_email_btn_text', __( 'Send Direct Email', 'ross-portfolio' ) );
 $contact_phone_btn = ross_portfolio_get_option( 'contact_phone_btn_text', __( 'Call Direct', 'ross-portfolio' ) );
 
+// FAQ Accordion Controls
 $faq_tag           = ross_portfolio_get_option( 'faq_section_tag', __( 'FAQ', 'ross-portfolio' ) );
 $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Frequently Asked Questions', 'ross-portfolio' ) );
 ?>
@@ -102,7 +114,7 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 	</div>
 </section>
 
-<!-- 2. Skills & Technical Expertise Section -->
+<!-- 2. Skills & Technical Expertise Section (Direct text and image customizer controls) -->
 <section id="skills" class="section-wrapper">
 	<div class="section-header">
 		<span class="section-tag"><?php echo esc_html( $skills_tag ); ?></span>
@@ -115,13 +127,18 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 			$skill_title = isset( $skill['title'] ) ? $skill['title'] : '';
 			$skill_desc  = isset( $skill['desc'] ) ? $skill['desc'] : '';
 			$skill_icon  = isset( $skill['icon'] ) ? $skill['icon'] : 'layers';
+			$skill_image = isset( $skill['image'] ) ? $skill['image'] : '';
 			if ( empty( $skill_title ) ) {
 				continue;
 			}
 			?>
 			<div class="glass-card skill-card">
 				<div class="skill-icon-wrap">
-					<?php echo ross_portfolio_get_icon_svg( $skill_icon ); ?>
+					<?php if ( ! empty( $skill_image ) ) : ?>
+						<img src="<?php echo esc_url( $skill_image ); ?>" alt="<?php echo esc_attr( $skill_title ); ?>" style="width: 28px; height: 28px; object-fit: contain;" />
+					<?php else : ?>
+						<?php echo ross_portfolio_get_icon_svg( $skill_icon ); ?>
+					<?php endif; ?>
 				</div>
 				<h3 class="skill-title"><?php echo esc_html( $skill_title ); ?></h3>
 				<p class="skill-desc"><?php echo esc_html( $skill_desc ); ?></p>
@@ -195,7 +212,36 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 	<?php endif; ?>
 </section>
 
-<!-- 4. Interactive FAQ Accordion Section -->
+<!-- 4. The Best Standout Call to Action (CTA) Section -->
+<section id="cta" class="section-wrapper standout-cta-section">
+	<div class="glass-card standout-cta-box">
+		<div class="standout-cta-glow" aria-hidden="true"></div>
+		<div class="standout-cta-inner">
+			<span class="glass-pill standout-cta-badge"><?php echo esc_html( $cta_tag ); ?></span>
+			<h2 class="standout-cta-title"><?php echo esc_html( $cta_heading ); ?></h2>
+			<p class="standout-cta-desc"><?php echo esc_html( $cta_desc ); ?></p>
+
+			<div class="standout-cta-actions">
+				<a href="<?php echo esc_url( $cta_primary_url ); ?>" class="btn btn-primary standout-btn-pulse">
+					<span><?php echo esc_html( $cta_primary_btn ); ?></span>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+				</a>
+				<a href="<?php echo esc_url( $cta_second_url ); ?>" class="btn btn-secondary">
+					<span><?php echo esc_html( $cta_second_btn ); ?></span>
+				</a>
+			</div>
+
+			<?php if ( ! empty( $cta_trust_note ) ) : ?>
+				<div class="standout-cta-trust">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-emerald);" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+					<span><?php echo esc_html( $cta_trust_note ); ?></span>
+				</div>
+			<?php endif; ?>
+		</div>
+	</div>
+</section>
+
+<!-- 5. Interactive FAQ Accordion Section (Individual Question & Answer controls) -->
 <?php if ( ! empty( $faqs ) ) : ?>
 <section id="faq" class="section-wrapper" itemscope itemtype="https://schema.org/FAQPage">
 	<div class="faq-section">
@@ -230,7 +276,7 @@ $faq_title         = ross_portfolio_get_option( 'faq_section_title', __( 'Freque
 </section>
 <?php endif; ?>
 
-<!-- 5. Direct Contact Showcase Section -->
+<!-- 6. Direct Contact Showcase Section -->
 <section id="contact" class="section-wrapper">
 	<div class="glass-card contact-section-inner">
 		<div class="contact-content">
