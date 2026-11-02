@@ -908,6 +908,40 @@ function ross_portfolio_customize_register( $wp_customize ) {
 		)
 	);
 
+	$wp_customize->add_setting(
+		'contact_response_time',
+		array(
+			'default'           => 'Usually responds within 24 hours',
+			'sanitize_callback' => 'sanitize_text_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_response_time',
+		array(
+			'label'       => __( 'Response Time Guarantee Note', 'ross-portfolio' ),
+			'description' => __( 'Appears on the Contact Page Template details card.', 'ross-portfolio' ),
+			'section'     => 'ross_portfolio_contact_section',
+			'type'        => 'text',
+		)
+	);
+
+	$wp_customize->add_setting(
+		'contact_page_intro',
+		array(
+			'default'           => 'Have an ambitious web project, architectural consultation, or performance audit in mind? Drop a message below to connect directly.',
+			'sanitize_callback' => 'sanitize_textarea_field',
+		)
+	);
+	$wp_customize->add_control(
+		'contact_page_intro',
+		array(
+			'label'       => __( 'Contact Page Template: Lead Intro Copy', 'ross-portfolio' ),
+			'description' => __( 'Displayed under the page title on the dedicated Contact page.', 'ross-portfolio' ),
+			'section'     => 'ross_portfolio_contact_section',
+			'type'        => 'textarea',
+		)
+	);
+
 	// Section 9: FAQ Accordion Section (No JSON, 4 Individual Question & Answer Controls)
 	$wp_customize->add_section(
 		'ross_portfolio_faq_section',

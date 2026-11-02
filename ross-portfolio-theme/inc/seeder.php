@@ -65,6 +65,22 @@ function ross_portfolio_seed_content() {
 		}
 	}
 
+	// Seed Contact Page with Contact Page Template
+	$existing_contact = get_page_by_title( 'Contact', OBJECT, 'page' );
+	if ( ! $existing_contact ) {
+		$contact_id = wp_insert_post(
+			array(
+				'post_title'   => 'Contact',
+				'post_content' => '<!-- wp:paragraph --><p>Feel free to reach out directly using the inquiry form or via the listed communication channels. We welcome architecture reviews, performance audits, and bespoke WordPress engineering inquiries.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_type'    => 'page',
+			)
+		);
+		if ( $contact_id && ! is_wp_error( $contact_id ) ) {
+			update_post_meta( $contact_id, '_wp_page_template', 'template-contact.php' );
+		}
+	}
+
 	update_option( 'ross_portfolio_seeded_v1', true );
 }
 add_action( 'after_switch_theme', 'ross_portfolio_seed_content' );
